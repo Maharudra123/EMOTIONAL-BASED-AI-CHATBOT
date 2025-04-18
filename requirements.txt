@@ -5,4 +5,5 @@ pyttsx3
 torch
 transformers
 google-generativeai
-
+gunicorn
+markdown
