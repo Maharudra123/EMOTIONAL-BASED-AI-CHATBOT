@@ -1,0 +1,8 @@
+Flask
+requests
+wikipedia
+pyttsx3
+torch
+transformers
+google-generativeai
+

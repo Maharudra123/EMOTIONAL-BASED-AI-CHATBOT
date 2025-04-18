@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>NeuraChat Terminal</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        background-color: #0d1117;
+        color: #c9d1d9;
+        font-family: "Courier New", monospace;
+      }
+      #chatOutput {
+        max-height: 500px;
+        overflow-y: auto;
+        border: 1px solid #30363d;
+        padding: 15px;
+        background-color: #161b22;
+        border-radius: 8px;
+      }
+      .user-msg {
+        color: #58a6ff;
+        font-weight: bold;
+        margin-bottom: 5px;
+      }
+      .bot-msg {
+        background: #21262d;
+        color: #c9d1d9;
+        padding: 10px;
+        border-radius: 5px;
+      }
+      .input-group input {
+        background-color: #0d1117;
+        border: 1px solid #30363d;
+        color: #fff;
+      }
+      .input-group .btn-primary {
+        background-color: #238636;
+        border-color: #238636;
+      }
+      .input-group .btn-secondary {
+        background-color: #30363d;
+        border-color: #30363d;
+        color: #fff;
+      }
+      h1,
+      p.lead {
+        color: #58a6ff;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container mt-5">
+      <h1 class="mb-3 text-center">💬 AI FRIEND APP</h1>
+      <p class="lead text-center">{{ greeting }}</p>
+
+      <div class="input-group mb-3">
+        <input
+          type="text"
+          id="userInput"
+          class="form-control"
+          placeholder="Type a command or question..."
+        />
+        <button class="btn btn-primary" onclick="sendMessage()">Execute</button>
+        <button class="btn btn-secondary" onclick="startListening()">🎤</button>
+      </div>
+
+      <div id="chatOutput" class="mt-4"></div>
+
+      <!-- Spinner -->
+      <div class="text-center mt-3" id="spinner" style="display: none">
+        <div class="spinner-border text-success" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      function sendMessage() {
+        const userInput = document.getElementById("userInput").value;
+        const chatOutput = document.getElementById("chatOutput");
+        const spinner = document.getElementById("spinner");
+
+        if (!userInput.trim()) return;
+
+        spinner.style.display = "block";
+
+        fetch("/ask", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+          body: `message=${encodeURIComponent(userInput)}`,
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            const messageBlock = `
+              <div class="mb-3">
+                <div class="user-msg">You: ${userInput}</div>
+                <div class="bot-msg"><strong>Neura:</strong> <span>${data.response}</span></div>
+              </div>
+            `;
+            chatOutput.innerHTML += messageBlock;
+            document.getElementById("userInput").value = "";
+            chatOutput.scrollTop = chatOutput.scrollHeight;
+
+            // 🔊 Text-to-Speech
+            const cleanResponse = data.response.replace(/<[^>]*>?/gm, "");
+            const utterance = new SpeechSynthesisUtterance(cleanResponse);
+            speechSynthesis.speak(utterance);
+          })
+          .finally(() => {
+            spinner.style.display = "none";
+          });
+      }
+
+      // 🎤 Speech-to-Text
+      function startListening() {
+        const recognition = new (window.SpeechRecognition ||
+          window.webkitSpeechRecognition)();
+        recognition.lang = "en-US";
+        recognition.onresult = function (event) {
+          const transcript = event.results[0][0].transcript;
+          document.getElementById("userInput").value = transcript;
+          sendMessage(); // Auto-send
+        };
+        recognition.start();
+      }
+    </script>
+  </body>
+</html>
