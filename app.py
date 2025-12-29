@@ -3,7 +3,7 @@ from bot import HybridAssistant, wishMe
 import markdown  # To convert markdown to HTML
 
 # API Keys
-GOOGLE_API_KEY = 'AIzaSyCEWMBHDdvegrXeDgK3R-kBg5xDxdnryEU'
+GOOGLE_API_KEY = 'AIzaSyAJ5xVpjeaCXWHTjqg_eQ3TAuZ82QPmJWM'
 WEATHER_API_KEY = '7bcc14a012464257fb28ff3ee878bd39'
 NEWS_API_KEY = '1f83a0479f694f0091098c6bc25bcfe8'
 
