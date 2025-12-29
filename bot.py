@@ -61,7 +61,7 @@ class HybridAssistant:
     def __init__(self, google_api_key: str, weather_api_key: str, news_api_key: str):
         self.history = []
         genai.configure(api_key=google_api_key)
-        self.gemini_model = genai.GenerativeModel('gemini-1.5-pro-latest')
+        self.gemini_model = genai.GenerativeModel('gemini-2.5-flash')
         self.chat = self.gemini_model.start_chat(history=self.history)
 
         self.sentiment_pipeline = pipeline(
